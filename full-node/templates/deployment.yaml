@@ -1,0 +1,154 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ include "node.fullname" . }}
+  labels:
+    {{- include "node.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "node.selectorLabels" . | nindent 6 }}
+  replicas: {{ .Values.replicaCount }}
+  minReadySeconds: 10 # by default is 0
+  strategy:
+    type: {{ .Values.strategyType }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "node.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      terminationGracePeriodSeconds: 10
+      serviceAccountName: {{ include "node.serviceAccountName" . }}
+      securityContext: {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command: ["/bin/sh"]
+        args:
+        - "-c"
+        - "/scripts/start.sh"
+        ports:
+          - name: p2p
+            containerPort: 26656
+          - name: rpc
+            containerPort: 26657
+          - name: api
+            containerPort: 1317
+          - name: grpc
+            containerPort: 9090
+          - name: port
+            containerPort: 9091
+          - name: prometheus
+            containerPort: 26660
+          - name: node-exporter
+            containerPort: 9100
+        env:
+        - name: GITHUB_URL
+          value: {{ .Values.node.env.githubUrl }}
+        - name: CHAIN_ID
+          value: {{ .Values.node.env.chainId }}
+        - name: APP_VERSION
+          value: {{ .Values.node.env.appVersion }}
+        - name: COSMOVISOR_VERSION
+          value: {{ .Values.node.env.cosmovisorVersion }}
+        - name: MONIKER
+          value: {{ .Values.node.env.moniker }}
+        - name: GAS_FEE
+          value: {{ .Values.node.env.gasFee }}
+        - name: GENESIS_URL
+          value: {{ .Values.node.env.genesisUrl }}
+        - name: ADDRESS_BOOK_URL
+          value: {{ .Values.node.env.addressBookUrl }}
+        - name: SEED_URL
+          value: {{ .Values.node.env.seedUrl }}
+        - name: DAEMON_NAME
+          value: {{ .Values.node.env.daemonName }}
+        - name: DAEMON_HOME
+          value: {{ .Values.node.env.daemonHome }}
+        - name: REPO_HOME
+          value: {{ .Values.node.env.repoHome }}
+        - name: PRUNING_OPTION
+          value: {{ .Values.node.env.pruningOption }}
+        - name: PRUNING_KEEP_RECENT
+          value: {{ .Values.node.env.pruningKeepRecent | quote }}
+        - name: PRUNING_KEEP_EVERY
+          value: {{ .Values.node.env.pruningKeepEvery | quote  }}
+        - name: PRUNING_INTERVAL
+          value: {{ .Values.node.env.pruningInterval | quote }}
+        - name: STATE_SYNC
+          value: {{ .Values.node.env.stateSync | quote }}
+        - name: STATE_SYNC_RPC
+          value: {{ .Values.node.env.stateSyncRpc | quote}}
+        - name: STATE_SYNC_PEER
+          value: {{ .Values.node.env.stateSyncPeer | quote}}
+        - name: STATE_SYNC_MAX_VALID_HEIGHT
+          value: {{ .Values.node.env.stateSyncMaxValidHeight | quote }}
+        - name: API_CORS_ENABLE
+          value: {{ .Values.node.env.apiCorsEnable | quote }}
+        - name: API_ENABLE
+          value: {{ .Values.node.env.apiEnable | quote }}
+        - name: API_SWAGGER_ENABLE
+          value: {{ .Values.node.env.apiSwaggerEnable | quote }}
+        - name: IMPORT_VALIDATOR
+          value: {{ .Values.node.env.importValidator | quote }}
+        - name: KEYRING_BACKEND
+          value: {{ .Values.node.env.keyringBackend| quote }}
+        - name: VAL_KEY
+          value: {{ .Values.node.env.valKey  }}
+        - name: VAL_MNEMONIC
+          value: {{ .Values.node.env.valMnemonic| quote }}
+        - name: VAL_PRIV_KEY
+          value: {{ .Values.node.env.valPrivKey| quote }}
+          #livenessProbe:
+          #  tcpSocket:
+          #    port: 26657
+          #  initialDelaySeconds: 5
+          #  periodSeconds: 10
+          #readinessProbe:
+          #  tcpSocket:
+          #    port: 26657
+          #  initialDelaySeconds: 5
+          #  periodSeconds: 10
+        volumeMounts:
+          - name: scripts
+            mountPath: /scripts
+          - name: data
+            mountPath: /root
+      volumes:
+      - name: scripts
+        configMap:
+          name: {{ include "node.fullname" . }}-scripts
+          defaultMode: 0777
+      - name: data
+      {{- if and .Values.persistence.enabled (not .Values.persistence.hostPath) }}
+        persistentVolumeClaim:
+          claimName: {{ if .Values.persistence.existingClaim }}{{ .Values.persistence.existingClaim }}{{- else }}{{ template "node.fullname" . }}{{- end }}
+      {{- else if and .Values.persistence.enabled .Values.persistence.hostPath }}
+        hostPath:
+          path: {{ .Values.persistence.hostPath }}
+          type: DirectoryOrCreate
+      {{- else }}
+        emptyDir: {}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

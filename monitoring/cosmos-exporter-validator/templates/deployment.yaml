@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "validator.fullname" . }}
+  labels:
+    {{- include "validator.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: {{ .Values.strategyType }}
+  selector:
+    matchLabels:
+      {{- include "validator.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "validator.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/sh"]
+          args: ["-c", "/scripts/start.sh"]
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+          ports:
+            - name: cosmos-exporter
+              containerPort: 9300
+              protocol: TCP
+          env:
+            - name: BOND_DENOM
+              value: {{ .Values.validator.env.bondDenom }}
+            - name: BENCH_PREFIX
+              value: {{ .Values.validator.env.benchPrefix }}
+            - name: RPC_URL
+              value: http://hypersign:26657
+            - name: GRPC_URL
+              value: hypersign:9090
+            - name: LISTEN_ADDR
+              value: :9300
+      volumes:
+      - name: scripts
+        configMap:
+          name: {{ include "validator.fullname" . }}-scripts
+          defaultMode: 0777
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

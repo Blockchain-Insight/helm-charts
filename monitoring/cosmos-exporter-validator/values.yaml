@@ -1,0 +1,41 @@
+#provider: "aws"
+
+replicaCount: 1
+
+strategyType: RollingUpdate
+
+imagePullSecrets:
+  - name: regcred
+
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+validator:
+  env:
+    bondDenom: uhid
+    benchPrefix: hid1
+
+image:
+  repository: hora1427/cosmos-exporter
+  pullPolicy: IfNotPresent
+  tag: test
+
+service:
+  type: ClusterIP
+
+nodeSelector:
+  Role: validator
+
+tolerations:
+- key: "dedicated"
+  operator: "Equal"
+  value: "validator"
+  effect: "NoSchedule"
+
+affinity: {}

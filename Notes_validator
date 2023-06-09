@@ -1,0 +1,10 @@
+# Prerequirment 
+docker secret should be present 
+
+chart name: validator
+release name: hypersign 
+name: hypersign-validator
+namespace: validator
+
+# to do 
+upgrade has to be tested 

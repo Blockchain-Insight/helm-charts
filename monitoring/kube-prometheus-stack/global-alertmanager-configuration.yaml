@@ -1,0 +1,63 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: global-alertmanager-configuration
+  namespace: monitoring
+spec:
+  route:
+    receiver: "slack"
+    groupBy:
+    - namespace
+    - service
+    - alertname
+    continue: false
+    groupWait: 30s
+    groupInterval: 5m
+    repeatInterval: 3h
+#    routes:
+#    - receiver: slack
+#      matchers:
+#        - name: namespace
+#          matchType: =
+#          value: default|node|validator|monitoring
+#      continue: false
+#  inhibitRules:
+#  - sourceMatch:
+#    - matchType: "="
+#      name: "severity"
+#      value: "critical"
+#    targetMatch:
+#    - matchType: "=~"
+#      name: "severity"
+#      value: "warning|info"
+#    equal:
+#    - namespace
+#    - alertname
+#  - sourceMatch:
+#    - matchType: "="
+#      name: "severity"
+#      value: "warning"
+#    targetMatch:
+#    - matchType: "="
+#      name: "severity"
+#      value: "info"
+#    equal:
+#    - namespace
+#    - alertname
+#  - sourceMatch:
+#    - matchType: "="
+#      name: "alertname"
+#      value: "InfoInhibitor"
+#    targetMatch:
+#    - matchType: "="
+#      name: "severity"
+#      value: "info"
+#    equal:
+#    - namespace
+  receivers:
+  - name: 'slack'
+    slackConfigs:
+    - channel: '#blockchaininsight'
+      apiURL:
+        name: slack-credentials
+        key: slack-credentials

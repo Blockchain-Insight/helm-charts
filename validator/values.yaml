@@ -1,0 +1,93 @@
+provider: "aws"
+
+replicaCount: 1
+
+imagePullSecrets:
+  - name: regcred
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+strategyType: ""
+
+resources: {}
+
+image:
+  repository: hora1427/full-node
+  pullPolicy: IfNotPresent
+  tag: dev
+  
+validator:
+  env:
+    githubUrl: "https://github.com/hypersign-protocol/hid-validator.git"
+    chainId: "jagrat"
+    appVersion: "v0.1.7"
+    cosmovisorVersion: "v1.4.0"
+    moniker: "testing"
+    gasFee: "0uhid"
+    genesisUrl: "https://snapshots.kjvalidators.com/hypersign-testnet/genesis.json"
+    # addressBookUrl is optional?
+    addressBookUrl: "https://snapshots.kjvalidators.com/hypersign-testnet/addrbook.json"
+    seedUrl: "3f472746f46493309650e5a033076689996c8881@hypersign-testnet.rpc.kjvalidators.com:31659"
+    daemonName: "hid-validatord"
+    daemonHome: "/root/.hid-validator"
+    repoHome: "/root/hid-validator"
+    # if pruningOption is set, all the following pruning values must also be given
+    # if pruningOption not set, use default values. What are the default values
+    pruningOption: "custom"
+    pruningKeepRecent: "100"
+    pruningKeepEvery: "0"
+    pruningInterval: "19"
+
+    # if STATE_SYNC is true, only then the othe state sync values are required.
+    stateSync: "true"
+    stateSyncRpc: "https://hypersign-testnet.rpc.kjvalidators.com:443"
+    stateSyncPeer: "d5519e378247dfb61dfe90652d1fe3e2b3005a5b@hypersign-testnet.rpc.kjvalidators.com:31656"
+    stateSyncMaxValidHeight: "1000"
+
+
+    # if apiCorsEnable set use, otherwise default value
+    apiCorsEnable: "true"
+    # if apiEnable set use, otherwise default value
+    apiEnable: "true"
+    # if apiSwaggerEnable set use, otherwise default value
+    apiSwaggerEnable: "true"
+
+# If importValidator, then following values are required
+    importValidator: "false"
+    keyringBackend: "test"
+    valKey: ""
+    valMnemonic: ""
+    valPrivKey: 
+
+service:
+  type: ClusterIP
+
+persistence:
+  enabled: true
+  #size: 10Gi
+  #accessMode: ReadWriteOnce
+  #storageClass: hostpath
+  hostPath: /data/validator
+
+nodeSelector:
+  Role: validator
+
+tolerations:
+- key: "dedicated"
+  operator: "Equal"
+  value: "validator"
+  effect: "NoSchedule"
+
+affinity: {}

@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ include "node.fullname" . }}-grpc
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: grpc.{{ include "node.fullname" . }}.node.blockchaininsight.org
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: {{ include "node.fullname" . }}
+            port:
+              number: 9090

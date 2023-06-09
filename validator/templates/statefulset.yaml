@@ -1,0 +1,155 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ include "validator.fullname" . }}
+  labels:
+    {{- include "validator.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "validator.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "validator.fullname" . }}-headless
+  replicas: {{ .Values.replicaCount }}
+  minReadySeconds: 10 # by default is 0
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "validator.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      terminationGracePeriodSeconds: 10
+      serviceAccountName: {{ include "validator.serviceAccountName" . }}
+      securityContext: {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command: ["/bin/sh"]
+        args:
+        - "-c"
+        - "/scripts/start.sh"
+        ports:
+          - name: p2p
+            containerPort: 26656
+          - name: rpc
+            containerPort: 26657
+          - name: api
+            containerPort: 1317
+          - name: grpc
+            containerPort: 9090
+          - name: port
+            containerPort: 9091
+          - name: prometheus
+            containerPort: 26660
+          - name: validator-exporter
+            containerPort: 9100
+        env:
+        - name: GITHUB_URL
+          value: {{ .Values.validator.env.githubUrl }}
+        - name: CHAIN_ID
+          value: {{ .Values.validator.env.chainId }}
+        - name: APP_VERSION
+          value: {{ .Values.validator.env.appVersion }}
+        - name: COSMOVISOR_VERSION
+          value: {{ .Values.validator.env.cosmovisorVersion }}
+        - name: MONIKER
+          value: {{ .Values.validator.env.moniker }}
+        - name: GAS_FEE
+          value: {{ .Values.validator.env.gasFee }}
+        - name: GENESIS_URL
+          value: {{ .Values.validator.env.genesisUrl }}
+        - name: ADDRESS_BOOK_URL
+          value: {{ .Values.validator.env.addressBookUrl }}
+        - name: SEED_URL
+          value: {{ .Values.validator.env.seedUrl }}
+        - name: DAEMON_NAME
+          value: {{ .Values.validator.env.daemonName }}
+        - name: DAEMON_HOME
+          value: {{ .Values.validator.env.daemonHome }}
+        - name: REPO_HOME
+          value: {{ .Values.validator.env.repoHome }}
+        - name: PRUNING_OPTION
+          value: {{ .Values.validator.env.pruningOption }}
+        - name: PRUNING_KEEP_RECENT
+          value: {{ .Values.validator.env.pruningKeepRecent | quote }}
+        - name: PRUNING_KEEP_EVERY
+          value: {{ .Values.validator.env.pruningKeepEvery | quote  }}
+        - name: PRUNING_INTERVAL
+          value: {{ .Values.validator.env.pruningInterval | quote }}
+        - name: STATE_SYNC
+          value: {{ .Values.validator.env.stateSync | quote }}
+        - name: STATE_SYNC_RPC
+          value: {{ .Values.validator.env.stateSyncRpc | quote}}
+        - name: STATE_SYNC_PEER
+          value: {{ .Values.validator.env.stateSyncPeer | quote}}
+        - name: STATE_SYNC_MAX_VALID_HEIGHT
+          value: {{ .Values.validator.env.stateSyncMaxValidHeight | quote }}
+        - name: API_CORS_ENABLE
+          value: {{ .Values.validator.env.apiCorsEnable | quote }}
+        - name: API_ENABLE
+          value: {{ .Values.validator.env.apiEnable | quote }}
+        - name: API_SWAGGER_ENABLE
+          value: {{ .Values.validator.env.apiSwaggerEnable | quote }}
+        - name: IMPORT_VALIDATOR
+          value: {{ .Values.validator.env.importValidator | quote }}
+        - name: KEYRING_BACKEND
+          value: {{ .Values.validator.env.keyringBackend| quote }}
+        - name: VAL_KEY
+          value: {{ .Values.validator.env.valKey  }}
+        - name: VAL_MNEMONIC
+          value: {{ .Values.validator.env.valMnemonic| quote }}
+        - name: VAL_PRIV_KEY
+          value: {{ .Values.validator.env.valPrivKey| quote }}
+          #livenessProbe:
+          #  tcpSocket:
+          #    port: 26657
+          #  initialDelaySeconds: 5
+          #  periodSeconds: 10
+          #readinessProbe:
+          #  tcpSocket:
+          #    port: 26657
+          #  initialDelaySeconds: 5
+          #  periodSeconds: 10
+        volumeMounts:
+          - name: scripts
+            mountPath: /scripts
+          - name: data
+            mountPath: /root
+      #resources:
+      #  {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+      - name: scripts
+        configMap:
+          name: {{ include "validator.fullname" . }}-scripts
+          defaultMode: 0777
+      - name: data
+      {{- if and .Values.persistence.enabled (not .Values.persistence.hostPath) }}
+        persistentVolumeClaim:
+          claimName: {{ if .Values.persistence.existingClaim }}{{ .Values.persistence.existingClaim }}{{- else }}{{ template "validator.fullname" . }}{{- end }}
+      {{- else if and .Values.persistence.enabled .Values.persistence.hostPath }}
+        hostPath:
+          path: {{ .Values.persistence.hostPath }}
+          type: DirectoryOrCreate
+      {{- else }}
+        emptyDir: {}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

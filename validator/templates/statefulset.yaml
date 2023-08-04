@@ -49,7 +49,7 @@ spec:
             containerPort: 9091
           - name: prometheus
             containerPort: 26660
-          - name: validator-exporter
+          - name: exporter
             containerPort: 9100
         env:
         - name: GITHUB_URL
@@ -123,8 +123,6 @@ spec:
             mountPath: /scripts
           - name: data
             mountPath: /root
-      #resources:
-      #  {{- toYaml .Values.resources | nindent 12 }}
       volumes:
       - name: scripts
         configMap:

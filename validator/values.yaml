@@ -3,7 +3,7 @@ provider: "aws"
 replicaCount: 1
 
 imagePullSecrets:
-  - name: regcred
+  - name: docker-imagepullsecret
 
 nameOverride: ""
 fullnameOverride: ""
@@ -20,8 +20,6 @@ podSecurityContext: {}
 securityContext: {}
 
 strategyType: ""
-
-resources: {}
 
 image:
   repository: hora1427/full-node
@@ -89,5 +87,5 @@ tolerations:
   operator: "Equal"
   value: "validator"
   effect: "NoSchedule"
-
+  
 affinity: {}

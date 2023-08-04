@@ -25,6 +25,6 @@ spec:
     - port: 26660
       name: prometheus
     - port: 9100
-      name: validator-exporter
+      name: exporter
   selector:
     {{- include "validator.selectorLabels" . | nindent 4 }}

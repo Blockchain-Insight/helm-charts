@@ -3,7 +3,7 @@ provider: "aws"
 replicaCount: 2
 
 imagePullSecrets:
-  - name: regcred
+  - name: docker-imagepullsecret
 
 nameOverride: ""
 fullnameOverride: ""
@@ -27,6 +27,8 @@ image:
   repository: hora1427/full-node
   pullPolicy: IfNotPresent
   tag: dev
+
+hostedZone: node.blockchaininsight.org
 
 node:
   env:

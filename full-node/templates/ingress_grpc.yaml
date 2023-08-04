@@ -8,7 +8,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: grpc.{{ include "node.fullname" . }}.node.blockchaininsight.org
+  - host: grpc.{{ .Values.hostedZone }}
     http:
       paths:
       - pathType: Prefix

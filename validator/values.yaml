@@ -22,7 +22,7 @@ securityContext: {}
 strategyType: ""
 
 image:
-  repository: hora1427/full-node
+  repository: xxxx/full-node
   pullPolicy: IfNotPresent
   tag: dev
   
@@ -35,7 +35,6 @@ validator:
     moniker: "testing"
     gasFee: "0uhid"
     genesisUrl: "https://snapshots.kjvalidators.com/hypersign-testnet/genesis.json"
-    # addressBookUrl is optional?
     addressBookUrl: "https://snapshots.kjvalidators.com/hypersign-testnet/addrbook.json"
     seedUrl: "3f472746f46493309650e5a033076689996c8881@hypersign-testnet.rpc.kjvalidators.com:31659"
     daemonName: "hid-validatord"
@@ -53,7 +52,6 @@ validator:
     stateSyncRpc: "https://hypersign-testnet.rpc.kjvalidators.com:443"
     stateSyncPeer: "d5519e378247dfb61dfe90652d1fe3e2b3005a5b@hypersign-testnet.rpc.kjvalidators.com:31656"
     stateSyncMaxValidHeight: "1000"
-
 
     # if apiCorsEnable set use, otherwise default value
     apiCorsEnable: "true"

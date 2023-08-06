@@ -1,4 +1,4 @@
-Configuration Options for Validator Deployment
+# Configuration Options for Validator Deployment
 
 This Readme file provides an overview of the configuration options available for deploying a validator using the specified values in *values.yaml*. The deployment is intended for AWS (Amazon Web Services) infrastructure. Below are the configuration options that can be set:
 
@@ -68,7 +68,7 @@ Please note that some configuration options have default values that will be use
 Ensure to set the appropriate values for the desired deployment and customize the configurations based on your specific requirements.
 
 Once the configurations are set, deploy the validator application:
-Deploying full node
+
 ```bash
 helm install <name> . -n validator
 ```

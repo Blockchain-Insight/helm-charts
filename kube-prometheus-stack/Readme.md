@@ -1,19 +1,19 @@
-Deployment 
+# Deployment of monitoring stack
+
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts 
+```
 
 - Edit values.yaml
 ```bash
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts 
 helm install kube-prometheus-stack -n monitoring prometheus-community/kube-prometheus-stack -f values.yaml
 ```
-On the kube-prometheus-stack is deployed successfully 
+- Once the kube-prometheus-stack is deployed successfully 
 ```bash
 kubectl apply -f global-alertmanager-configuration.yaml
 ```
-
-## Configuration
-
-### Configure Grafana
-1. Open Grafana in your web browser (using port forwarding). Grafana service is available on port `80`
+## Configure Grafana
+1. Open Grafana in your web browser (using port forwarding). Grafana service is available on port `80`.
 
 2. Login using defaults username:admin and password:prom-operator and change password.
 

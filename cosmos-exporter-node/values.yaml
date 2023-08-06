@@ -22,7 +22,7 @@ node:
     benchPrefix: hid1
 
 image:
-  repository: hora1427/cosmos-exporter
+  repository: xxxx/cosmos-exporter
   pullPolicy: IfNotPresent
   tag: dev
 

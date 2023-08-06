@@ -22,7 +22,7 @@ validator:
     benchPrefix: hid1
 
 image:
-  repository: hora1427/cosmos-exporter
+  repository: xxxxx/cosmos-exporter
   pullPolicy: IfNotPresent
   tag: dev
 

@@ -1,6 +1,6 @@
-Configuration Options for Full Node Deployment
+# Configuration Options for Full Node Deployment
 
-This Readme file provides an overview of the configuration options available for deploying a full node using the specified values. The deployment is intended for AWS (Amazon Web Services) infrastructure. Below are the configuration options that can be set:
+This Readme file provides an overview of the configuration options available for deploying a full node using the specified values in *values.yaml*. The deployment is intended for AWS (Amazon Web Services) infrastructure. Below are the configuration options that can be set:
 
 **General Options:**
 - provider: The cloud provider where the deployment will take place. In this case, it is set to "aws."
@@ -35,11 +35,14 @@ This Readme file provides an overview of the configuration options available for
 - daemonName: The name of the daemon.
 - daemonHome: The home directory for the daemon.
 - repoHome: The home directory for the repository.
-*If pruningOption is set, all the following pruning values must also be given*
-* If pruningOption not set, use default values. What are the default values*
+  
+*If pruningOption is set, all the following pruning values must also be given. If pruningOption not set, use default values.*
+
 - pruningOption: The pruning option for the blockchain data.
 - pruningKeepRecent, pruningKeepEvery, and pruningInterval: Pruning values when custom pruning is enabled.
- * If STATE_SYNC is true, only then the following state sync values are required.*
+
+*If STATE_SYNC is true, only then the following state sync values are required.*
+
 - stateSync: Whether to enable state sync.
 - stateSyncRpc: RPC URL for state sync.
 - stateSyncPeer: State sync peer URL.
@@ -64,11 +67,8 @@ This Readme file provides an overview of the configuration options available for
 Please note that some configuration options have default values that will be used if not explicitly provided.
 Ensure to set the appropriate values for the desired deployment and customize the configurations based on your specific requirements.
 
-
-
-Deploying full node
+Once the configurations are set, deploy full node application:
 
 ```bash
-helm install hypersign . -n node
+helm install <name> . -n node
 ```
-

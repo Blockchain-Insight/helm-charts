@@ -42,7 +42,7 @@ validator:
     daemonHome: "/root/.hid-validator"
     repoHome: "/root/hid-validator"
     # if pruningOption is set, all the following pruning values must also be given
-    # if pruningOption not set, use default values. What are the default values
+    # if pruningOption not set, use default values.
     pruningOption: "custom"
     pruningKeepRecent: "100"
     pruningKeepEvery: "0"

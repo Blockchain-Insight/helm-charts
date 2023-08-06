@@ -5,7 +5,7 @@ replicaCount: 1
 strategyType: RollingUpdate
 
 imagePullSecrets:
-  - name: regcred
+  - name: docker-imagepullsecret
 
 nameOverride: ""
 fullnameOverride: ""
@@ -24,7 +24,9 @@ validator:
 image:
   repository: hora1427/cosmos-exporter
   pullPolicy: IfNotPresent
-  tag: test
+  tag: dev
+
+fullNodeAppName: hypersign
 
 service:
   type: ClusterIP

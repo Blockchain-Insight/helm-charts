@@ -47,9 +47,9 @@ spec:
             - name: BENCH_PREFIX
               value: {{ .Values.validator.env.benchPrefix }}
             - name: RPC_URL
-              value: http://hypersign:26657
+              value: http://{{ .Values.fullNodeAppName }}-validator:26657
             - name: GRPC_URL
-              value: hypersign:9090
+              value: {{ .Values.fullNodeAppName }}-validator:9090
             - name: LISTEN_ADDR
               value: :9300
       volumes:

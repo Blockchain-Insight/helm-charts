@@ -63,11 +63,11 @@ validator:
     apiSwaggerEnable: "true"
 
 # If importValidator, then following values are required
-    importValidator: "false"
-    keyringBackend: "test"
-    valKey: ""
-    valMnemonic: ""
-    valPrivKey: 
+    importValidator: "true"
+    keyringBackend: "dummy"
+    valKey: "dummy"
+    valMnemonic: "dummy"
+    valPrivKey: "dummy"
 
 service:
   type: ClusterIP
@@ -76,7 +76,7 @@ persistence:
   enabled: true
   #size: 10Gi
   #accessMode: ReadWriteOnce
-  #storageClass: hostpath
+  #storageClass: gp3
   hostPath: /data/validator
 
 nodeSelector:

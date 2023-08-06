@@ -68,10 +68,10 @@ node:
 
 # If importValidator, then following values are required
     importValidator: "false"
-    keyringBackend: "test"
+    keyringBackend: ""
     valKey: ""
     valMnemonic: ""
-    valPrivKey: 
+    valPrivKey: ""
 
 service:
   type: ClusterIP
@@ -80,7 +80,7 @@ persistence:
   enabled: true
   #size: 10Gi
   #accessMode: ReadWriteOnce
-  #storageClass: hostpath
+  #storageClass: gp3
   hostPath: /data/node
 
 nodeSelector:

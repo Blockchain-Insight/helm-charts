@@ -1,5 +1,5 @@
-
-This Readme.md file provides an overview of the configuration options available for deploying the Cosmos Exporter using the specified values. The deployment is intended for AWS (Amazon Web Services) infrastructure. Below are the configuration options that can be set:
+# Deploying Cosmos-exporter for full-node
+This Readme.md file provides an overview of the configuration options available for deploying the Cosmos Exporter using the specified values in *values.yaml*. The deployment is intended for AWS (Amazon Web Services) infrastructure. Below are the configuration options that can be set:
 
 **General Options:**
 - provider: The cloud provider where the deployment will take place. In this case, it is set to "aws."
@@ -12,7 +12,9 @@ This Readme.md file provides an overview of the configuration options available 
 
 **Node Options:**
 - env: Environment variables to be set in the Cosmos Exporter container.
+  
 *Following fields must be set with appropriate values for the blockchain that is deployed earlier using the full-node helm chart*
+
 - bondDenom (required): Denominated token name. You can find it in genesis file.
 - benchPrefix (required): Prefix for chain addresses. You can find it in public addresses.
 
@@ -22,7 +24,7 @@ This Readme.md file provides an overview of the configuration options available 
 - image.tag (required): The specific tag of the container image to use.
 
 **Full Node Application Options:**
-fullNodeAppName (required): The name of the full node application (in this case, "hypersign").
+- fullNodeAppName (required): The name of the helm release used to deploy full-node application (in this case, "hypersign").
 
 **Service Options:**
 - service.type: The type of Kubernetes service to create for the Cosmos Exporter.
@@ -36,8 +38,8 @@ Please note that some configuration options might have default values that will 
 
 Ensure to set the appropriate values for the desired deployment and customize the configurations based on your specific requirements.
 
-Deploying cosmos-exporter 
+Once configurations are set, deploy cosmos-exporter
 
 ```bash
-helm install hypersign-exporter . -n node
+helm install <name> . -n node
 ```
